@@ -1,0 +1,403 @@
+'use client';
+
+import { useState } from 'react';
+import { Save, Settings as SettingsIcon, Globe, Mail, Key, Shield, Zap } from 'lucide-react';
+import { AdminLayout } from '@/components/layout/AdminLayout';
+
+function SettingsContent() {
+  const [settings, setSettings] = useState({
+    // Site Settings
+    siteName: 'Mortgage Website',
+    siteTagline: 'Your trusted mortgage partner',
+    siteUrl: 'https://mortgagesite.com',
+    contactEmail: 'info@mortgagesite.com',
+    contactPhone: '1-800-XXX-XXXX',
+    
+    // SEO Settings
+    metaTitle: 'Mortgage Services | Get the Best Rates',
+    metaDescription: 'Find the best mortgage rates and expert guidance for your home buying journey',
+    googleAnalyticsId: '',
+    
+    // Email Settings
+    smtpHost: 'smtp.example.com',
+    smtpPort: '587',
+    smtpUsername: '',
+    smtpPassword: '',
+    emailFromAddress: 'noreply@mortgagesite.com',
+    emailFromName: 'Mortgage Team',
+    
+    // Feature Toggles
+    enableOnlineApplications: true,
+    enableAppointmentBooking: true,
+    enableBlogComments: false,
+    enableRatingsReviews: true,
+    maintenanceMode: false,
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  const handleChange = (field: string, value: string | boolean) => {
+    setSettings((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveMessage('');
+    
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    // In production, this would save to database
+    localStorage.setItem('siteSettings', JSON.stringify(settings));
+    
+    setIsSaving(false);
+    setSaveMessage('Settings saved successfully!');
+    setTimeout(() => setSaveMessage(''), 3000);
+  };
+
+  return (
+    <div className="p-8">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">System Settings</h1>
+          <p className="text-gray-600 mt-1">Configure your site settings and preferences</p>
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save className="w-5 h-5" />
+          {isSaving ? 'Saving...' : 'Save Changes'}
+        </button>
+      </div>
+
+      {saveMessage && (
+        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-800">{saveMessage}</p>
+        </div>
+      )}
+
+      <div className="space-y-6">
+        {/* Site Settings */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Globe className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Site Settings</h2>
+                <p className="text-sm text-gray-600">Basic site configuration</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Site Name
+                </label>
+                <input
+                  type="text"
+                  value={settings.siteName}
+                  onChange={(e) => handleChange('siteName', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Site Tagline
+                </label>
+                <input
+                  type="text"
+                  value={settings.siteTagline}
+                  onChange={(e) => handleChange('siteTagline', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Site URL
+              </label>
+              <input
+                type="url"
+                value={settings.siteUrl}
+                onChange={(e) => handleChange('siteUrl', e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Email
+                </label>
+                <input
+                  type="email"
+                  value={settings.contactEmail}
+                  onChange={(e) => handleChange('contactEmail', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Phone
+                </label>
+                <input
+                  type="tel"
+                  value={settings.contactPhone}
+                  onChange={(e) => handleChange('contactPhone', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SEO Settings */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <SettingsIcon className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">SEO & Analytics</h2>
+                <p className="text-sm text-gray-600">Search engine optimization settings</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Meta Title
+              </label>
+              <input
+                type="text"
+                value={settings.metaTitle}
+                onChange={(e) => handleChange('metaTitle', e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Meta Description
+              </label>
+              <textarea
+                value={settings.metaDescription}
+                onChange={(e) => handleChange('metaDescription', e.target.value)}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Google Analytics ID
+              </label>
+              <input
+                type="text"
+                value={settings.googleAnalyticsId}
+                onChange={(e) => handleChange('googleAnalyticsId', e.target.value)}
+                placeholder="G-XXXXXXXXXX"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Email Settings */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Mail className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Email Configuration</h2>
+                <p className="text-sm text-gray-600">SMTP settings for sending emails</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  SMTP Host
+                </label>
+                <input
+                  type="text"
+                  value={settings.smtpHost}
+                  onChange={(e) => handleChange('smtpHost', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  SMTP Port
+                </label>
+                <input
+                  type="text"
+                  value={settings.smtpPort}
+                  onChange={(e) => handleChange('smtpPort', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  SMTP Username
+                </label>
+                <input
+                  type="text"
+                  value={settings.smtpUsername}
+                  onChange={(e) => handleChange('smtpUsername', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  SMTP Password
+                </label>
+                <input
+                  type="password"
+                  value={settings.smtpPassword}
+                  onChange={(e) => handleChange('smtpPassword', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  From Email Address
+                </label>
+                <input
+                  type="email"
+                  value={settings.emailFromAddress}
+                  onChange={(e) => handleChange('emailFromAddress', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  From Name
+                </label>
+                <input
+                  type="text"
+                  value={settings.emailFromName}
+                  onChange={(e) => handleChange('emailFromName', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature Toggles */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Zap className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Feature Toggles</h2>
+                <p className="text-sm text-gray-600">Enable or disable site features</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <label className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+              <div>
+                <p className="font-medium text-gray-900">Online Applications</p>
+                <p className="text-sm text-gray-600">Allow users to submit mortgage applications online</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.enableOnlineApplications}
+                onChange={(e) => handleChange('enableOnlineApplications', e.target.checked)}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+              <div>
+                <p className="font-medium text-gray-900">Appointment Booking</p>
+                <p className="text-sm text-gray-600">Enable online appointment scheduling</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.enableAppointmentBooking}
+                onChange={(e) => handleChange('enableAppointmentBooking', e.target.checked)}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+              <div>
+                <p className="font-medium text-gray-900">Blog Comments</p>
+                <p className="text-sm text-gray-600">Allow comments on blog posts</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.enableBlogComments}
+                onChange={(e) => handleChange('enableBlogComments', e.target.checked)}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+              <div>
+                <p className="font-medium text-gray-900">Ratings & Reviews</p>
+                <p className="text-sm text-gray-600">Enable ratings and reviews for agents</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.enableRatingsReviews}
+                onChange={(e) => handleChange('enableRatingsReviews', e.target.checked)}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-4 bg-red-50 rounded-lg hover:bg-red-100 cursor-pointer border-2 border-red-200">
+              <div>
+                <p className="font-medium text-red-900">Maintenance Mode</p>
+                <p className="text-sm text-red-700">Display maintenance page to visitors</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.maintenanceMode}
+                onChange={(e) => handleChange('maintenanceMode', e.target.checked)}
+                className="w-5 h-5 text-red-600 border-red-300 rounded focus:ring-red-500"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Save Button (bottom) */}
+      <div className="mt-8 flex justify-end">
+        <button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg font-medium"
+        >
+          <Save className="w-6 h-6" />
+          {isSaving ? 'Saving Changes...' : 'Save All Settings'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <AdminLayout>
+      <SettingsContent />
+    </AdminLayout>
+  );
+}

@@ -1,0 +1,319 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+
+    /* approvU Mortgage Brand Colors - Warmer & More Human */
+    --primary: 191 70% 32%; /* Softer teal */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 191 60% 42%;
+    --primary-dark: 191 85% 22%; /* Warmer navy */
+    --primary-glow: 191 60% 52%; /* For glowing effects */
+
+    --secondary: 191 85% 22%; /* Warmer navy */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 97%; /* #F6F9FB light gray */
+    --muted-foreground: 0 0% 35%;
+    
+    --surface: 210 40% 97%; /* #F6F9FB light gray */
+
+    --accent: 25 95% 65%; /* Warm coral for warmth */
+    --accent-foreground: 0 0% 100%;
+
+    --highlight: 48 88% 72%; /* Softer yellow */
+    --highlight-foreground: 191 85% 22%;
+    
+    /* Human-centered colors */
+    --warm-green: 142 76% 36%; /* Success with warmth */
+    --soft-blue: 217 91% 60%; /* Trustworthy blue */
+    --gentle-orange: 31 100% 70%; /* Friendly accent */
+
+    --success: 174 64% 48%;
+    --success-foreground: 0 0% 100%;
+
+    --info: 186 100% 36%;
+    --info-foreground: 0 0% 100%;
+
+    --warning: 62 91% 79%;
+    --warning-foreground: 191 100% 20%;
+
+    --destructive: 351 78% 71%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 50% 90%;
+    --input: 200 50% 90%;
+    --ring: 191 100% 20%;
+
+    --radius: 0.75rem;
+
+    /* Human-Centered Design Tokens */
+    --hero-gradient: linear-gradient(135deg, hsl(191 70% 32%), hsl(191 85% 22%));
+    --hero-gradient-warm: linear-gradient(135deg, hsl(191 60% 42%), hsl(25 95% 65%));
+    --section-bg: 210 40% 98%;
+    --feature-bg: 0 0% 100%;
+    --testimonial-bg: 210 30% 96%;
+    
+    /* Delightful interactions */
+    --glow-primary: 0 0 30px hsl(191 60% 52% / 0.3);
+    --glow-success: 0 0 20px hsl(142 76% 36% / 0.4);
+    --shadow-soft: 0 4px 20px hsl(191 70% 32% / 0.1);
+    --shadow-hover: 0 8px 30px hsl(191 70% 32% / 0.15);
+    
+    /* Trust and warmth */
+    --trust-text: 191 70% 32%;
+    --form-bg: 0 0% 100%;
+    --card-hover: 210 40% 99%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 191 100% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 191 100% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 191 100% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 191 100% 25%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 191 100% 35%;
+    --primary-dark: 191 100% 15%;
+
+    --secondary: 188 59% 47%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 191 100% 12%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 0 99% 70%;
+    --accent-foreground: 0 0% 100%;
+
+    --highlight: 48 98% 69%;
+    --highlight-foreground: 191 100% 20%;
+
+    --success: 174 64% 48%;
+    --success-foreground: 0 0% 100%;
+
+    --info: 186 100% 36%;
+    --info-foreground: 0 0% 100%;
+
+    --warning: 62 91% 79%;
+    --warning-foreground: 191 100% 20%;
+
+    --destructive: 351 78% 71%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 191 100% 15%;
+    --input: 191 100% 15%;
+    --ring: 191 100% 25%;
+
+    --hero-gradient: linear-gradient(135deg, hsl(191 100% 25%), hsl(188 59% 47%));
+    --section-bg: 191 100% 10%;
+    --feature-bg: 191 100% 8%;
+    --testimonial-bg: 191 100% 12%;
+    --surface: 191 100% 10%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  /* Smooth scrolling for better UX */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Delightful button effects */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 
+           transition-all duration-300 ease-out
+           hover:shadow-lg hover:scale-[1.02] 
+           active:scale-[0.98]
+           focus:ring-4 focus:ring-primary/20;
+  }
+  
+  .btn-glow {
+    @apply animate-pulse-glow;
+  }
+  
+  /* Interactive cards */
+  .card-interactive {
+    @apply transition-all duration-300 ease-out
+           hover:shadow-xl hover:scale-[1.02] hover:bg-card-hover
+           cursor-pointer;
+  }
+  
+  /* Form enhancements */
+  .form-field {
+    @apply transition-all duration-200 ease-out
+           focus:ring-2 focus:ring-primary/30 focus:border-primary
+           hover:border-primary/50;
+  }
+  
+  /* Trust badges */
+  .trust-badge {
+    @apply flex items-center gap-2 text-warm-green font-medium
+           animate-fade-in;
+  }
+  
+  /* Section animations */
+  .section-animate {
+    @apply animate-slide-up;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Toast animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Responsive utilities */
+@layer utilities {
+  /* Mobile-friendly table cells */
+  .table-cell-responsive {
+    @apply px-3 py-3 sm:px-6 sm:py-4;
+  }
+  
+  /* Responsive text sizes */
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-responsive-base {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-lg {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  /* Responsive padding */
+  .padding-responsive {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+  
+  /* Responsive gaps */
+  .gap-responsive {
+    @apply gap-3 sm:gap-4 lg:gap-6;
+  }
+  
+  /* Mobile-friendly buttons */
+  .btn-mobile-full {
+    @apply w-full sm:w-auto;
+  }
+  
+  /* Scrollable on mobile */
+  .scroll-mobile {
+    @apply overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0;
+  }
+}
+
+/* Mobile table improvements */
+@media (max-width: 640px) {
+  /* Make tables scrollable horizontally */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Smaller table cells on mobile */
+  th, td {
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  /* Hide less important columns on mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Tablet improvements */
+@media (max-width: 1024px) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+/* Touch-friendly elements */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .hover-desktop:hover {
+    background-color: inherit !important;
+  }
+}

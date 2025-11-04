@@ -1,0 +1,17 @@
+# Vercel ignore file
+# Files and directories to ignore during Vercel deployment
+
+# Documentation (optional - speeds up deployment)
+*.md
+!README.md
+
+# Development files
+.env.local
+.vscode/
+.idea/
+
+# Test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
