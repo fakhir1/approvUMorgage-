@@ -16,9 +16,16 @@ export default function ConditionalFooter() {
   // Fetch social links from API on mount
   useEffect(() => {
     fetch('/api/admin/settings')
-      .then((res) => res.json())
+      .then((res) => {
+        // Check if response is OK and is JSON
+        if (!res.ok) {
+          // If not authorized or error, just use defaults
+          return null;
+        }
+        return res.json();
+      })
       .then((result) => {
-        if (result.data) {
+        if (result && result.data) {
           setSocialLinks({
             linkedinUrl: result.data.linkedinUrl || socialLinks.linkedinUrl,
             twitterUrl: result.data.twitterUrl || socialLinks.twitterUrl,
@@ -27,7 +34,10 @@ export default function ConditionalFooter() {
           });
         }
       })
-      .catch((err) => console.error('Failed to load social links:', err));
+      .catch((err) => {
+        // Silently fail and use default links
+        console.log('Using default social links');
+      });
   }, []);
   
   // Don't show footer on admin pages
