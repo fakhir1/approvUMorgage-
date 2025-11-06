@@ -2,6 +2,9 @@ import { isMaintenanceMode } from '@/lib/settings'
 import { isAdmin } from '@/lib/auth/helpers'
 import { Settings, Wrench } from 'lucide-react'
 
+// Force dynamic rendering (required for cookies/auth)
+export const dynamic = 'force-dynamic'
+
 export default async function MaintenancePage() {
   const inMaintenance = await isMaintenanceMode()
   const userIsAdmin = await isAdmin()
