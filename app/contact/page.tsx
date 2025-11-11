@@ -8,6 +8,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
+
+// Contact Page Schema for SEO
+const contactPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "approvU",
+    "url": "https://www.approvu.ca",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "areaServed": "CA",
+      "availableLanguage": ["en", "fr"]
+    }
+  }
+};
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -106,6 +124,9 @@ export default function Contact() {
 
   return (
     <>
+      {/* Schema Markup for Contact Page SEO */}
+      <SchemaMarkup schema={contactPageSchema} />
+      
       <Hero
         title="Get in Touch"
         subtitle="Have questions? Our mortgage experts are here to help you navigate your home financing journey."

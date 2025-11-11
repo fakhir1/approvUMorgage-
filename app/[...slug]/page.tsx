@@ -49,9 +49,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function DynamicPage({ params }: PageProps) {
   const { slug: slugArray } = await params;
   const slug = slugArray.join('/');
+  
+  // Skip static file paths (images, fonts, etc.)
+  const staticExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.ico', '.pdf', '.woff', '.woff2', '.ttf', '.eot'];
+  const isStaticFile = staticExtensions.some(ext => slug.toLowerCase().endsWith(ext));
+  
+  if (isStaticFile || slug.startsWith('images/') || slug.startsWith('_next/')) {
+    notFound();
+    return null;
+  }
+  
   const supabase = await createServerSupabaseClient();
-
-  console.log('Looking for page with slug:', slug);
 
   // Fetch page data - database uses 'path' not 'slug'
   const { data: page, error } = await supabase
@@ -61,10 +69,7 @@ export default async function DynamicPage({ params }: PageProps) {
     .eq('status', 'published')
     .single();
 
-  console.log('Page query result:', { page, error });
-
   if (error || !page) {
-    console.log('Page not found, showing 404');
     notFound();
   }
 

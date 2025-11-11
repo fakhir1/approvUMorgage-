@@ -4,6 +4,7 @@ import FeaturesGrid from "@/components/sections/FeaturesGrid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SchemaMarkup, organizationSchema, websiteSchema } from "@/components/seo/SchemaMarkup";
 import {
   Accordion,
   AccordionContent,
@@ -255,6 +256,9 @@ const finalCTAFeatures = [
 export default function Home() {
   return (
     <>
+      {/* Schema Markup for SEO - Invisible to users, only for Google */}
+      <SchemaMarkup schema={[organizationSchema, websiteSchema]} />
+      
       <Hero
         title="Your Mortgage. Matched to Your Life."
         subtitle="No haggling. No confusion. Just personalized mortgage offers that help you achieve your homeownership dreams."

@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { SchemaMarkup, generatePersonSchema, generateBreadcrumbSchema } from '@/components/seo/SchemaMarkup';
 import {
   Star,
   MapPin,
@@ -133,8 +134,27 @@ export default async function AgentDetailPage({
     }
   };
 
+  // Generate schema markup for SEO
+  const personSchema = generatePersonSchema({
+    name: agent.name,
+    jobTitle: agent.title,
+    email: agent.email || undefined,
+    telephone: agent.phone || undefined,
+    imageUrl: agent.profile_image_url || undefined,
+    description: agent.bio || undefined
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: 'https://www.approvu.ca' },
+    { name: 'Agents', url: 'https://www.approvu.ca/agents' },
+    { name: agent.name, url: `https://www.approvu.ca/agents/${agent.slug}` }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Schema Markup for Agent Profile SEO */}
+      <SchemaMarkup schema={[personSchema, breadcrumbSchema]} />
+      
       <main>
         {/* Back Navigation */}
         <section className="py-6 px-4 bg-muted/30 border-b">

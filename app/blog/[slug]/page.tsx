@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Clock, User, ArrowLeft, Share2 } from 'lucide-react';
 import Link from 'next/link';
+import { SchemaMarkup, generateArticleSchema, generateBreadcrumbSchema } from '@/components/seo/SchemaMarkup';
 
 interface BlogPost {
   id: string;
@@ -70,16 +71,18 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const supabase = await createServerSupabaseClient();
 
-  const { data: post, error } = await supabase
+  const { data: postData, error } = await supabase
     .from('blog_posts')
     .select('*, profiles(first_name, last_name, email)')
     .eq('slug', slug)
     .eq('status', 'published')
     .single();
 
-  if (error || !post) {
+  if (error || !postData) {
     notFound();
   }
+
+  const post = postData as unknown as BlogPost;
 
   // Fetch related posts
   const { data: relatedPosts } = await supabase
@@ -105,10 +108,11 @@ export default async function BlogPostPage({
   };
 
   const getAuthorName = () => {
-    if (post.profiles?.first_name && post.profiles?.last_name) {
-      return `${post.profiles.first_name} ${post.profiles.last_name}`;
+    const profiles = post.profiles as { first_name: string | null; last_name: string | null; email: string } | undefined;
+    if (profiles?.first_name && profiles?.last_name) {
+      return `${profiles.first_name} ${profiles.last_name}`;
     }
-    return post.profiles?.email || 'approvU Team';
+    return profiles?.email || 'approvU Team';
   };
 
   const getReadTime = (content: string | null) => {
@@ -119,8 +123,28 @@ export default async function BlogPostPage({
     return `${minutes} min`;
   };
 
+  // Generate schema markup for SEO
+  const articleSchema = generateArticleSchema({
+    title: post.title,
+    description: post.excerpt || post.meta_description || '',
+    url: `https://www.approvu.ca/blog/${post.slug}`,
+    datePublished: post.published_at || post.created_at,
+    dateModified: post.updated_at,
+    authorName: getAuthorName(),
+    imageUrl: post.featured_image_url || undefined
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: 'https://www.approvu.ca' },
+    { name: 'Blog', url: 'https://www.approvu.ca/blog' },
+    { name: post.title, url: `https://www.approvu.ca/blog/${post.slug}` }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Schema Markup for Article SEO */}
+      <SchemaMarkup schema={[articleSchema, breadcrumbSchema]} />
+      
       <main>
         {/* Back Navigation */}
         <section className="py-6 px-4 bg-muted/30 border-b">

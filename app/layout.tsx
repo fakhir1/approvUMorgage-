@@ -6,6 +6,7 @@ import ConditionalFooter from "@/components/layout/ConditionalFooter";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,12 +57,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get GA4 Measurement ID from environment variable
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        {/* Google Analytics 4 - Only loads if NEXT_PUBLIC_GA_MEASUREMENT_ID is set */}
+        {gaId && <GoogleAnalytics measurementId={gaId} />}
+        
         <ErrorBoundary>
           <ToastProvider>
             <AuthProvider>
