@@ -53,8 +53,13 @@ export async function fetchAPI<T = any>(
 
 // Helper to get careers page data
 export async function getCareersPage() {
-  const response = await fetchAPI('/careers-pages?populate=*');
-  return response.data[0]; // Return first entry
+  try {
+    const response = await fetchAPI('/careers-pages?populate=*');
+    return response.data[0]; // Return first entry
+  } catch (error) {
+    console.error('Failed to fetch careers page:', error);
+    return null;
+  }
 }
 
 // Helper to get homepage data
