@@ -71,7 +71,7 @@ export async function getHomepage() {
 // Helper to get about page data
 export async function getAboutPage() {
   try {
-    const response = await fetchAPI('/about?populate=deep');
+    const response = await fetchAPI('/about?populate=*');
     // For single types, Strapi returns data directly (not wrapped in response.data)
     return response;
   } catch (error) {
