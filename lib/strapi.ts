@@ -25,7 +25,7 @@ export async function fetchAPI<T = any>(
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store', // Always fetch fresh data
+    next: { revalidate: 60 }, // Revalidate every 60 seconds (ISR)
   };
 
   const mergedOptions = {
