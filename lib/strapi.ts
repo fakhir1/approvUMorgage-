@@ -85,6 +85,28 @@ export async function getAboutPage() {
   }
 }
 
+// Helper to get mortgage page data by slug
+export async function getMortgagePage(slug: string) {
+  try {
+    const response = await fetchAPI(`/mortgage-pages?filters[slug][$eq]=${slug}&populate=*`);
+    return response.data[0]; // Return first matching entry
+  } catch (error) {
+    console.error(`Failed to fetch mortgage page (${slug}):`, error);
+    return null;
+  }
+}
+
+// Helper to get all mortgage pages (for sitemap, etc.)
+export async function getAllMortgagePages() {
+  try {
+    const response = await fetchAPI('/mortgage-pages?populate=*');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch mortgage pages:', error);
+    return [];
+  }
+}
+
 // Helper to get image URL from Strapi media
 export function getStrapiMediaUrl(url: string | null | undefined): string {
   if (!url) return '/images/default-hero.jpg';

@@ -3,14 +3,28 @@ import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate"
 import StepsSection from "@/components/sections/StepsSection";
 import FAQBlock from "@/components/sections/FAQBlock";
 import { AlertCircle, TrendingUp, Shield, CheckCircle } from "lucide-react";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Bad Credit Mortgage Solutions | Get Approved in Canada",
-  description: "Get a mortgage with bad credit. Learn about B-lenders, alternative solutions, credit repair strategies, and rebuilding options.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('bad-credit');
+  
+  return {
+    title: mortgageData?.metaTitle || "Bad Credit Mortgage Solutions | Get Approved in Canada",
+    description: mortgageData?.metaDescription || "Get a mortgage with bad credit. Learn about B-lenders, alternative solutions, credit repair strategies, and rebuilding options.",
+  };
+}
 
-export default function BadCreditPage() {
-  const steps = [
+export default async function BadCreditPage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('bad-credit');
+  } catch (error) {
+    console.error('Error fetching bad credit mortgage data:', error);
+  }
+
+  // Fallback data
+  const defaultSteps = [
     {
       number: "1",
       title: "Check Your Credit Report",
@@ -43,7 +57,7 @@ export default function BadCreditPage() {
     },
   ];
 
-  const faqs = [
+  const defaultFaqs = [
     {
       question: "What credit score do I need to get a mortgage?",
       answer: "Traditional lenders (banks) typically require 680+. B-lenders work with scores from 550-679. Private lenders may approve scores under 550. However, lower scores mean higher rates and larger down payments (often 15-35%).",
@@ -70,7 +84,7 @@ export default function BadCreditPage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Credit Score Impact on Mortgages",
@@ -91,14 +105,19 @@ export default function BadCreditPage() {
     },
   ];
 
+  // Use Strapi data if available, otherwise use fallback
+  const steps = mortgageData?.steps || defaultSteps;
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Bad Credit Mortgage"
-      headline="Bad Credit Mortgage Solutions"
-      excerpt="Get approved for a mortgage even with bad credit. Learn about alternative lenders, credit repair, and rebuilding strategies."
-      category="Mortgage Solutions"
-      tags={["Bad Credit", "B-Lender", "Credit Repair", "Alternative Lenders"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Bad Credit Mortgage"}
+      headline={mortgageData?.heroTitle || "Bad Credit Mortgage Solutions"}
+      excerpt={mortgageData?.excerpt || "Get approved for a mortgage even with bad credit. Learn about alternative lenders, credit repair, and rebuilding strategies."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Bad Credit", "B-Lender", "Credit Repair", "Alternative Lenders"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Bad Credit", href: "/mortgage/bad-credit" },
       ]}
