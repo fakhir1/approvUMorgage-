@@ -1,14 +1,26 @@
 import { Metadata } from "next";
 import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate";
 import FAQBlock from "@/components/sections/FAQBlock";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Reverse Mortgage Guide Canada | CHIP Reverse Mortgage",
-  description: "Access your home equity without selling. Learn about reverse mortgages for Canadian seniors aged 55+. No monthly payments required.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('reverse-mortgage');
+  
+  return {
+    title: mortgageData?.metaTitle || "Reverse Mortgage Guide Canada | CHIP Reverse Mortgage",
+    description: mortgageData?.metaDescription || "Access your home equity without selling. Learn about reverse mortgages for Canadian seniors aged 55+. No monthly payments required.",
+  };
+}
 
-export default function ReverseMortgagePage() {
-  const faqs = [
+export default async function ReverseMortgagePage() {
+  let mortgageData;
+  try {
+    mortgageData = await getMortgagePage('reverse-mortgage');
+  } catch (error) {
+    console.error('Failed to fetch mortgage data:', error);
+  }
+
+  const defaultFaqs = [
     {
       question: "How does a reverse mortgage work?",
       answer: "A reverse mortgage lets you borrow against your home equity without making monthly payments. The loan is repaid when you sell, move out, or pass away. You retain ownership and can live in your home. Interest accumulates on the loan balance over time.",
@@ -35,7 +47,7 @@ export default function ReverseMortgagePage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Refinance Your Mortgage",
@@ -50,14 +62,17 @@ export default function ReverseMortgagePage() {
     },
   ];
 
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Reverse Mortgage"
-      headline="Reverse Mortgage Guide for Canadian Seniors"
-      excerpt="Access your home equity without monthly payments. Learn about reverse mortgages (CHIP) for Canadians aged 55+. Supplement retirement income while staying in your home."
-      category="Mortgage Solutions"
-      tags={["Reverse Mortgage", "CHIP", "Seniors", "Retirement", "Home Equity"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Reverse Mortgage"}
+      headline={mortgageData?.headline || "Reverse Mortgage Guide for Canadian Seniors"}
+      excerpt={mortgageData?.excerpt || "Access your home equity without monthly payments. Learn about reverse mortgages (CHIP) for Canadians aged 55+. Supplement retirement income while staying in your home."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Reverse Mortgage", "CHIP", "Seniors", "Retirement", "Home Equity"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Reverse Mortgage", href: "/mortgage/reverse-mortgage" },
       ]}

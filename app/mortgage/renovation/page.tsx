@@ -1,14 +1,26 @@
 import { Metadata } from "next";
 import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate";
 import FAQBlock from "@/components/sections/FAQBlock";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Renovation Mortgage | Finance Home Improvements Canada",
-  description: "Finance your home renovations with a renovation mortgage or HELOC. Learn about Purchase Plus Improvements and refinancing options.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('renovation');
+  
+  return {
+    title: mortgageData?.metaTitle || "Renovation Mortgage | Finance Home Improvements Canada",
+    description: mortgageData?.metaDescription || "Finance your home renovations with a renovation mortgage or HELOC. Learn about Purchase Plus Improvements and refinancing options.",
+  };
+}
 
-export default function RenovationMortgagePage() {
-  const faqs = [
+export default async function RenovationMortgagePage() {
+  let mortgageData;
+  try {
+    mortgageData = await getMortgagePage('renovation');
+  } catch (error) {
+    console.error('Failed to fetch mortgage data:', error);
+  }
+
+  const defaultFaqs = [
     {
       question: "What is a Purchase Plus Improvements mortgage?",
       answer: "Purchase Plus Improvements lets you include renovation costs in your mortgage when buying a home. You can borrow up to $40,000 extra (or more with some lenders) to renovate. The total loan must not exceed 95% of the improved property value.",
@@ -31,7 +43,7 @@ export default function RenovationMortgagePage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Refinance Your Mortgage",
@@ -46,14 +58,17 @@ export default function RenovationMortgagePage() {
     },
   ];
 
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Renovation Mortgage"
-      headline="Renovation Mortgage Guide"
-      excerpt="Finance your home improvements with a renovation mortgage, HELOC, or refinance. Learn about Purchase Plus Improvements and renovation financing options."
-      category="Mortgage Solutions"
-      tags={["Renovation", "HELOC", "Purchase Plus Improvements", "Home Equity"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Renovation Mortgage"}
+      headline={mortgageData?.headline || "Renovation Mortgage Guide"}
+      excerpt={mortgageData?.excerpt || "Finance your home improvements with a renovation mortgage, HELOC, or refinance. Learn about Purchase Plus Improvements and renovation financing options."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Renovation", "HELOC", "Purchase Plus Improvements", "Home Equity"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Renovation", href: "/mortgage/renovation" },
       ]}

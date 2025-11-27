@@ -3,14 +3,27 @@ import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate"
 import StepsSection from "@/components/sections/StepsSection";
 import FAQBlock from "@/components/sections/FAQBlock";
 import { TrendingUp, Calculator, Shield, DollarSign } from "lucide-react";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Mortgage Refinancing Guide | Lower Your Rate & Access Equity",
-  description: "Learn how to refinance your mortgage to get a better rate, access home equity, or consolidate debt. Expert guidance for Canadian homeowners.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('refinance');
+  
+  return {
+    title: mortgageData?.metaTitle || "Mortgage Refinancing Guide | Lower Your Rate & Access Equity",
+    description: mortgageData?.metaDescription || "Learn how to refinance your mortgage to get a better rate, access home equity, or consolidate debt. Expert guidance for Canadian homeowners.",
+  };
+}
 
-export default function RefinancePage() {
-  const steps = [
+export default async function RefinancePage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('refinance');
+  } catch (error) {
+    console.error('Error fetching refinance mortgage data:', error);
+  }
+
+  const defaultSteps = [
     {
       number: "1",
       title: "Check Your Home's Value",
@@ -38,7 +51,7 @@ export default function RefinancePage() {
     },
   ];
 
-  const faqs = [
+  const defaultFaqs = [
     {
       question: "When should I consider refinancing my mortgage?",
       answer: "Consider refinancing when: rates have dropped significantly (0.5%+ lower), you need to access equity for renovations or debt consolidation, you want to switch from variable to fixed (or vice versa), or your financial situation has improved and you qualify for better rates.",
@@ -65,7 +78,7 @@ export default function RefinancePage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Debt Consolidation Mortgages",
@@ -86,14 +99,18 @@ export default function RefinancePage() {
     },
   ];
 
+  const steps = mortgageData?.steps || defaultSteps;
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Mortgage Refinancing"
-      headline="Mortgage Refinancing Guide"
-      excerpt="Lower your rate, access equity, or consolidate debt. Learn everything about refinancing your Canadian mortgage."
-      category="Mortgage Solutions"
-      tags={["Refinancing", "Home Equity", "Lower Rates", "Debt Consolidation"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Mortgage Refinancing"}
+      headline={mortgageData?.heroTitle || "Mortgage Refinancing Guide"}
+      excerpt={mortgageData?.excerpt || "Lower your rate, access equity, or consolidate debt. Learn everything about refinancing your Canadian mortgage."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Refinancing", "Home Equity", "Lower Rates", "Debt Consolidation"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Refinance", href: "/mortgage/refinance" },
       ]}

@@ -1,14 +1,26 @@
 import { Metadata } from "next";
 import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate";
 import FAQBlock from "@/components/sections/FAQBlock";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Investment Property Mortgage | Rental Property Financing Canada",
-  description: "Finance your investment property with competitive rates. Learn about rental income calculation, down payments, and approval requirements.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('investment');
+  
+  return {
+    title: mortgageData?.metaTitle || "Investment Property Mortgage | Rental Property Financing Canada",
+    description: mortgageData?.metaDescription || "Finance your investment property with competitive rates. Learn about rental income calculation, down payments, and approval requirements.",
+  };
+}
 
-export default function InvestmentPropertyPage() {
-  const faqs = [
+export default async function InvestmentPropertyPage() {
+  let mortgageData;
+  try {
+    mortgageData = await getMortgagePage('investment');
+  } catch (error) {
+    console.error('Failed to fetch mortgage data:', error);
+  }
+
+  const defaultFaqs = [
     {
       question: "How much down payment do I need for an investment property?",
       answer: "Investment properties require a minimum 20% down payment in Canada. This is higher than primary residences (5% minimum) because lenders consider investment properties higher risk. Some lenders may require 25-35% for multiple properties.",
@@ -31,7 +43,7 @@ export default function InvestmentPropertyPage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Refinancing Your Mortgage",
@@ -46,14 +58,17 @@ export default function InvestmentPropertyPage() {
     },
   ];
 
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Investment Property Mortgage"
-      headline="Investment Property Mortgage Guide"
-      excerpt="Finance your rental property or real estate investment. Learn about down payments, rental income qualification, and investor-specific requirements."
-      category="Mortgage Solutions"
-      tags={["Investment Property", "Rental Income", "Real Estate Investing"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Investment Property Mortgage"}
+      headline={mortgageData?.headline || "Investment Property Mortgage Guide"}
+      excerpt={mortgageData?.excerpt || "Finance your rental property or real estate investment. Learn about down payments, rental income qualification, and investor-specific requirements."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Investment Property", "Rental Income", "Real Estate Investing"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Investment Property", href: "/mortgage/investment" },
       ]}

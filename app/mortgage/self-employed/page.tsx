@@ -3,14 +3,27 @@ import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate"
 import StepsSection from "@/components/sections/StepsSection";
 import FAQBlock from "@/components/sections/FAQBlock";
 import { Briefcase, FileText, TrendingUp, Users } from "lucide-react";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Self-Employed Mortgage Guide | Get Approved in Canada",
-  description: "Complete guide for self-employed Canadians seeking a mortgage. Learn about documentation, lenders, and strategies to get approved.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('self-employed');
+  
+  return {
+    title: mortgageData?.metaTitle || "Self-Employed Mortgage Guide | Get Approved in Canada",
+    description: mortgageData?.metaDescription || "Complete guide for self-employed Canadians seeking a mortgage. Learn about documentation, lenders, and strategies to get approved.",
+  };
+}
 
-export default function SelfEmployedPage() {
-  const steps = [
+export default async function SelfEmployedPage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('self-employed');
+  } catch (error) {
+    console.error('Error fetching self-employed mortgage data:', error);
+  }
+
+  const defaultSteps = [
     {
       number: "1",
       title: "Gather Financial Documents",
@@ -38,7 +51,7 @@ export default function SelfEmployedPage() {
     },
   ];
 
-  const faqs = [
+  const defaultFaqs = [
     {
       question: "What documents do self-employed borrowers need?",
       answer: "Most lenders require: 2 years of personal tax returns (T1 General), 2 years of Notices of Assessment from CRA, proof of business ownership (articles of incorporation or business license), business financial statements, and 90 days of recent bank statements. Lenders want to see stable, consistent income.",
@@ -65,7 +78,7 @@ export default function SelfEmployedPage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Documents Needed for Mortgage",
@@ -86,14 +99,18 @@ export default function SelfEmployedPage() {
     },
   ];
 
+  const steps = mortgageData?.steps || defaultSteps;
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Self-Employed Mortgage"
-      headline="Self-Employed Mortgage Guide"
-      excerpt="Get approved for a mortgage when you're self-employed. Learn about income verification, documentation, and lender options."
-      category="Mortgage Solutions"
-      tags={["Self-Employed", "Documentation", "Income Verification", "Business Owner"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Self-Employed Mortgage"}
+      headline={mortgageData?.heroTitle || "Self-Employed Mortgage Guide"}
+      excerpt={mortgageData?.excerpt || "Get approved for a mortgage when you're self-employed. Learn about income verification, documentation, and lender options."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Self-Employed", "Documentation", "Income Verification", "Business Owner"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Self-Employed", href: "/mortgage/self-employed" },
       ]}

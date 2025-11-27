@@ -3,14 +3,27 @@ import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate"
 import StepsSection from "@/components/sections/StepsSection";
 import FAQBlock from "@/components/sections/FAQBlock";
 import { Home, DollarSign, FileText, CheckCircle } from "lucide-react";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "First-Time Home Buyer Mortgage Guide | approvU Mortgages",
-  description: "Everything first-time home buyers need to know about getting a mortgage in Canada. Learn about down payments, incentives, and step-by-step process.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('first-time-buyer');
+  
+  return {
+    title: mortgageData?.metaTitle || "First-Time Home Buyer Mortgage Guide | approvU Mortgages",
+    description: mortgageData?.metaDescription || "Everything first-time home buyers need to know about getting a mortgage in Canada. Learn about down payments, incentives, and step-by-step process.",
+  };
+}
 
-export default function FirstTimeBuyerPage() {
-  const steps = [
+export default async function FirstTimeBuyerPage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('first-time-buyer');
+  } catch (error) {
+    console.error('Error fetching first-time-buyer mortgage data:', error);
+  }
+
+  const defaultSteps = [
     {
       number: "1",
       title: "Get Pre-Approved",
@@ -43,7 +56,7 @@ export default function FirstTimeBuyerPage() {
     },
   ];
 
-  const faqs = [
+  const defaultFaqs = [
     {
       question: "How much down payment do I need as a first-time buyer?",
       answer: "For homes under $500,000, you need at least 5% down. For homes between $500k-$1M, you need 5% on the first $500k and 10% on the remainder. For homes over $1M, you need 20% down.",
@@ -70,7 +83,7 @@ export default function FirstTimeBuyerPage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Mortgage Pre-Approval Guide",
@@ -91,14 +104,18 @@ export default function FirstTimeBuyerPage() {
     },
   ];
 
+  const steps = mortgageData?.steps || defaultSteps;
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="First-Time Home Buyer Mortgage"
-      headline="First-Time Home Buyer Mortgage Guide"
-      excerpt="Your complete guide to buying your first home in Canada. Learn about down payments, incentives, and the step-by-step process."
-      category="Mortgage Solutions"
-      tags={["First-Time Buyer", "Down Payment", "CMHC", "Home Buyers Plan"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "First-Time Home Buyer Mortgage"}
+      headline={mortgageData?.heroTitle || "First-Time Home Buyer Mortgage Guide"}
+      excerpt={mortgageData?.excerpt || "Your complete guide to buying your first home in Canada. Learn about down payments, incentives, and the step-by-step process."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["First-Time Buyer", "Down Payment", "CMHC", "Home Buyers Plan"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "First-Time Buyer", href: "/mortgage/first-time-buyer" },
       ]}

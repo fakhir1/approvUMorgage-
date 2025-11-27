@@ -2,14 +2,27 @@ import { Metadata } from "next";
 import { ArticlePageTemplate } from "@/components/templates/ArticlePageTemplate";
 import FAQBlock from "@/components/sections/FAQBlock";
 import { Calculator, TrendingDown, DollarSign } from "lucide-react";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Debt Consolidation Mortgage | Pay Off High-Interest Debt Canada",
-  description: "Consolidate credit cards, loans, and high-interest debt into your mortgage. Save thousands on interest and simplify payments.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('debt-consolidation');
+  
+  return {
+    title: mortgageData?.metaTitle || "Debt Consolidation Mortgage | Pay Off High-Interest Debt Canada",
+    description: mortgageData?.metaDescription || "Consolidate credit cards, loans, and high-interest debt into your mortgage. Save thousands on interest and simplify payments.",
+  };
+}
 
-export default function DebtConsolidationPage() {
-  const faqs = [
+export default async function DebtConsolidationPage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('debt-consolidation');
+  } catch (error) {
+    console.error('Error fetching debt-consolidation mortgage data:', error);
+  }
+
+  const defaultFaqs = [
     {
       question: "How does debt consolidation through a mortgage work?",
       answer: "You refinance your mortgage to access home equity, using the funds to pay off high-interest debts (credit cards, car loans, lines of credit). Instead of multiple payments at 15-25%, you have one mortgage payment at 5-7%, dramatically reducing interest costs.",
@@ -36,7 +49,7 @@ export default function DebtConsolidationPage() {
     },
   ];
 
-  const relatedPages = [
+  const defaultRelatedPages = [
     {
       id: "1",
       title: "Refinance Your Mortgage",
@@ -57,14 +70,17 @@ export default function DebtConsolidationPage() {
     },
   ];
 
+  const faqs = mortgageData?.faqs || defaultFaqs;
+  const relatedPages = mortgageData?.relatedPages || defaultRelatedPages;
+
   return (
     <ArticlePageTemplate
-      title="Debt Consolidation Mortgage"
-      headline="Debt Consolidation Mortgage Guide"
-      excerpt="Pay off high-interest debt by consolidating into your mortgage. Save thousands on interest and simplify your finances with one low monthly payment."
-      category="Mortgage Solutions"
-      tags={["Debt Consolidation", "Refinancing", "Home Equity", "Credit Card Debt"]}
-      breadcrumbs={[
+      title={mortgageData?.title || "Debt Consolidation Mortgage"}
+      headline={mortgageData?.heroTitle || "Debt Consolidation Mortgage Guide"}
+      excerpt={mortgageData?.excerpt || "Pay off high-interest debt by consolidating into your mortgage. Save thousands on interest and simplify your finances with one low monthly payment."}
+      category={mortgageData?.category || "Mortgage Solutions"}
+      tags={mortgageData?.tags || ["Debt Consolidation", "Refinancing", "Home Equity", "Credit Card Debt"]}
+      breadcrumbs={mortgageData?.breadcrumbs || [
         { label: "Mortgage Solutions", href: "/mortgage" },
         { label: "Debt Consolidation", href: "/mortgage/debt-consolidation" },
       ]}
