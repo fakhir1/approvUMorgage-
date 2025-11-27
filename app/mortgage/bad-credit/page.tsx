@@ -19,6 +19,7 @@ export default async function BadCreditPage() {
   
   try {
     mortgageData = await getMortgagePage('bad-credit');
+    console.log('Mortgage data loaded:', mortgageData ? 'Success' : 'Using fallback');
   } catch (error) {
     console.error('Error fetching bad credit mortgage data:', error);
   }
