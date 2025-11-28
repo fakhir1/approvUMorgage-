@@ -4,13 +4,29 @@ import { FeaturesGrid } from "@/components/sections/FeaturesGrid";
 import { StepsSection } from "@/components/sections/StepsSection";
 import { FAQBlock } from "@/components/sections/FAQBlock";
 import { CTASection } from "@/components/sections/CTASection";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Purchase Mortgage - Buy Your Dream Home | approvU",
-  description: "Get pre-approved for your home purchase in minutes. Access first-time buyer programs, competitive rates, and expert guidance. Start your home buying journey today.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('purchase');
+  
+  return {
+    title: mortgageData?.metaTitle || "Purchase Mortgage - Buy Your Dream Home | approvU",
+    description: mortgageData?.metaDescription || "Get pre-approved for your home purchase in minutes. Access first-time buyer programs, competitive rates, and expert guidance. Start your home buying journey today.",
+  };
+}
 
-export default function MortgagePurchase() {
+export default async function MortgagePurchase() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('purchase');
+  } catch (error) {
+    console.error('Error fetching purchase mortgage data:', error);
+  }
+
+  const heroTitle = mortgageData?.heroTitle || "Purchase Your Dream Home";
+  const heroSubtitle = mortgageData?.heroSubtitle || "Get pre-approved in minutes and access first-time buyer programs, competitive rates, and expert guidance for your home purchase.";
+
   const features = [
     {
       title: "First-Time Buyer Programs",
@@ -74,8 +90,8 @@ export default function MortgagePurchase() {
   return (
     <div className="min-h-screen bg-background">
       <Hero
-        headline="Purchase Your Dream Home with Confidence"
-        subheadline="Get pre-approved for your home purchase in minutes. Access exclusive first-time buyer programs, competitive rates, and expert guidance throughout your journey."
+        headline={heroTitle}
+        subheadline={heroSubtitle}
         primaryCTA={{
           text: "Get My Purchase Pre-Approval",
           href: "/mortgage/approval/",

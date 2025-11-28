@@ -6,13 +6,28 @@ import FAQBlock from "@/components/sections/FAQBlock";
 import CTASection from "@/components/sections/CTASection";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Professional Mortgages - Exclusive Programs for Licensed Professionals | approvU",
-  description: "Specialized mortgage programs for doctors, lawyers, accountants, and licensed professionals. Preferential rates, flexible terms, and practice financing available.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('professional');
+  
+  return {
+    title: mortgageData?.metaTitle || "Professional Mortgages - Exclusive Programs for Licensed Professionals | approvU",
+    description: mortgageData?.metaDescription || "Specialized mortgage programs for doctors, lawyers, accountants, and licensed professionals. Preferential rates, flexible terms, and practice financing available.",
+  };
+}
 
-export default function ProfessionalMortgages() {
+export default async function ProfessionalMortgages() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('professional');
+  } catch (error) {
+    console.error('Error fetching professional mortgage data:', error);
+  }
+
+  const heroTitle = mortgageData?.heroTitle || "Professional Mortgage Programs";
+  const heroSubtitle = mortgageData?.heroSubtitle || "Exclusive mortgage solutions for doctors, lawyers, accountants, and licensed professionals with preferential rates and flexible terms.";
   const features = [
     {
       title: "Preferential Interest Rates",
@@ -102,8 +117,8 @@ export default function ProfessionalMortgages() {
   return (
     <div className="min-h-screen bg-background">
       <Hero
-        headline="Professional Mortgages for Licensed Professionals"
-        subheadline="Exclusive mortgage programs for doctors, lawyers, accountants, and other licensed professionals. Benefit from preferential rates, flexible qualification, and specialized terms."
+        headline={heroTitle}
+        subheadline={heroSubtitle}
         primaryCTA={{
           text: "Get My Professional Mortgage",
           href: "/mortgage/approval/",

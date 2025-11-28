@@ -6,12 +6,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Mortgage Basics",
-  description:
-    "Learn the fundamentals of mortgages in Canada including terms, concepts, and essential information.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('basics');
+  
+  return {
+    title: mortgageData?.metaTitle || "Mortgage Basics | approvU",
+    description: mortgageData?.metaDescription || "Learn the fundamentals of mortgages in Canada including terms, concepts, and essential information.",
+  };
+}
 
 const faqs = [
   {
@@ -34,14 +38,25 @@ const faqs = [
     answer:
       "At the end of your term, you can renew with your current lender, switch to a new lender, or pay off the remaining balance. This is an opportunity to renegotiate your rate and terms without penalties.",
   },
-];
+};
 
-export default function MortgageBasicsPage() {
+export default async function MortgageBasicsPage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('basics');
+  } catch (error) {
+    console.error('Error fetching mortgage basics data:', error);
+  }
+
+  const heroTitle = mortgageData?.heroTitle || "Master Mortgage Fundamentals";
+  const heroSubtitle = mortgageData?.heroSubtitle || "Build a solid understanding of how mortgages work in Canada with our comprehensive basics guide";
+
   return (
     <>
       <Hero
-        title="Master Mortgage Fundamentals"
-        subtitle="Build a solid understanding of how mortgages work in Canada with our comprehensive basics guide"
+        title={heroTitle}
+        subtitle={heroSubtitle}
         ctaText="✨ Get Pre-Approved"
         ctaLink="/mortgage/approval"
         secondaryCTA="Use Calculators"

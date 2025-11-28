@@ -4,13 +4,29 @@ import FeaturesGrid from "@/components/sections/FeaturesGrid";
 import StepsSection from "@/components/sections/StepsSection";
 import FAQBlock from "@/components/sections/FAQBlock";
 import CTASection from "@/components/sections/CTASection";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Newcomer Mortgages - New to Canada Mortgage Programs | approvU",
-  description: "Special mortgage programs for new Canadians. No credit history required, foreign income recognition, and government incentives. Start your Canadian homeownership journey.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const mortgageData = await getMortgagePage('newcomer');
+  
+  return {
+    title: mortgageData?.metaTitle || "Newcomer Mortgages - New to Canada Mortgage Programs | approvU",
+    description: mortgageData?.metaDescription || "Special mortgage programs for new Canadians. No credit history required, foreign income recognition, and government incentives. Start your Canadian homeownership journey.",
+  };
+}
 
-export default function NewcomerMortgage() {
+export default async function NewcomerMortgage() {
+  let mortgageData = null;
+  
+  try {
+    mortgageData = await getMortgagePage('newcomer');
+  } catch (error) {
+    console.error('Error fetching newcomer mortgage data:', error);
+  }
+
+  const heroTitle = mortgageData?.heroTitle || "Newcomer to Canada Mortgage Programs";
+  const heroSubtitle = mortgageData?.heroSubtitle || "Special mortgage programs designed for new Canadians. No established credit history required, foreign income recognition, and access to government incentive programs.";
+
   const features = [
     {
       title: "No Canadian Credit History Required",
@@ -74,8 +90,8 @@ export default function NewcomerMortgage() {
   return (
     <div className="min-h-screen bg-background">
       <Hero
-        headline="Welcome to Canada - Get Your First Mortgage"
-        subheadline="Special mortgage programs for new Canadians with limited credit history. Access government incentives and flexible qualification designed for newcomers to Canada."
+        headline={heroTitle}
+        subheadline={heroSubtitle}
         primaryCTA={{
           text: "Get My Newcomer Mortgage",
           href: "/mortgage/approval/",
