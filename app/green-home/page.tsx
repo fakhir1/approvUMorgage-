@@ -2,13 +2,29 @@ import { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
 import FeaturesGrid from "@/components/sections/FeaturesGrid";
 import CTASection from "@/components/sections/CTASection";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Green Home Technology Guide | Energy-Efficient Homes | approvU",
-  description: "Discover green home technology solutions for energy-efficient, sustainable living. Learn about eco-friendly mortgages, rebates, and smart home energy systems.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('green-home');
+  
+  return {
+    title: pageData?.metaTitle || "Green Home Technology Guide | Energy-Efficient Homes | approvU",
+    description: pageData?.metaDescription || "Discover green home technology solutions for energy-efficient, sustainable living. Learn about eco-friendly mortgages, rebates, and smart home energy systems.",
+  };
+}
 
-export default function GreenHomeTechnology() {
+export default async function GreenHomeTechnology() {
+  let pageData = null;
+  
+  try {
+    pageData = await getMortgagePage('green-home');
+  } catch (error) {
+    console.error('Error fetching green-home page data:', error);
+  }
+
+  const heroTitle = pageData?.heroTitle || "Green Home Technology - Build Sustainable, Save Money";
+  const heroSubtitle = pageData?.heroSubtitle || "Discover green home technology solutions that reduce your environmental footprint while saving on energy costs. Access green mortgages, government rebates, and expert guidance.";
+
   const greenTechCategories = [
     {
       title: "Solar Energy Systems",
@@ -35,9 +51,9 @@ export default function GreenHomeTechnology() {
   return (
     <div className="min-h-screen bg-background">
       <Hero
-        title="Green Home Technology - Build Sustainable, Save Money"
-        headline="Build Sustainable, Save Money"
-        subheadline="Discover green home technology solutions that reduce your environmental footprint while saving on energy costs. Access green mortgages, government rebates, and expert guidance."
+        title={heroTitle}
+        headline={heroTitle}
+        subheadline={heroSubtitle}
         primaryCTA={{
           text: "Explore Green Mortgages",
           href: "/contact/"

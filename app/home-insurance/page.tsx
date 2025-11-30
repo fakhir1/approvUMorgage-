@@ -2,13 +2,29 @@ import { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
 import FeaturesGrid from "@/components/sections/FeaturesGrid";
 import CTASection from "@/components/sections/CTASection";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Home Insurance Guide Canada | Coverage & Quotes | approvU",
-  description: "Comprehensive home insurance coverage tailored to your needs. Compare quotes from top Canadian insurers and protect your home and family.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('home-insurance');
+  
+  return {
+    title: pageData?.metaTitle || "Home Insurance Guide Canada | Coverage & Quotes | approvU",
+    description: pageData?.metaDescription || "Comprehensive home insurance coverage tailored to your needs. Compare quotes from top Canadian insurers and protect your home and family.",
+  };
+}
 
-export default function HomeInsuranceOverview() {
+export default async function HomeInsuranceOverview() {
+  let pageData = null;
+  
+  try {
+    pageData = await getMortgagePage('home-insurance');
+  } catch (error) {
+    console.error('Error fetching home-insurance page data:', error);
+  }
+
+  const heroTitle = pageData?.heroTitle || "Protect Your Home, Protect Your Family";
+  const heroSubtitle = pageData?.heroSubtitle || "Comprehensive home insurance coverage tailored to your needs and peace of mind for what matters most.";
+
   const coverageTypes = [
     {
       title: "Dwelling Coverage",
@@ -35,9 +51,9 @@ export default function HomeInsuranceOverview() {
   return (
     <div className="min-h-screen bg-background">
       <Hero
-        title="Protect Your Home, Protect Your Family"
-        headline="Protect Your Home, Protect Your Family"
-        subheadline="Comprehensive home insurance coverage tailored to your needs and peace of mind for what matters most."
+        title={heroTitle}
+        headline={heroTitle}
+        subheadline={heroSubtitle}
         primaryCTA={{
           text: "Get Insurance Quotes",
           href: "/home-insurance/compare/"

@@ -1,12 +1,28 @@
 import { Metadata } from "next";
 import { HubPageTemplate, ChildPage } from "@/components/templates/HubPageTemplate";
+import { getMortgagePage } from "@/lib/strapi";
 
-export const metadata: Metadata = {
-  title: "Smart Home Technology Guide | Devices, Systems & Setup | approvU",
-  description: "Complete guide to smart home technology including security systems, lighting, thermostats, speakers, and installation. Expert reviews and buying advice for Canadian homeowners.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('smart-home');
+  
+  return {
+    title: pageData?.metaTitle || "Smart Home Technology Guide | Devices, Systems & Setup | approvU",
+    description: pageData?.metaDescription || "Complete guide to smart home technology including security systems, lighting, thermostats, speakers, and installation. Expert reviews and buying advice for Canadian homeowners.",
+  };
+}
 
-export default function SmartHomeOverview() {
+export default async function SmartHomeOverview() {
+  let pageData = null;
+  
+  try {
+    pageData = await getMortgagePage('smart-home');
+  } catch (error) {
+    console.error('Error fetching smart-home page data:', error);
+  }
+
+  const heroTitle = pageData?.heroTitle || "Smart Home Technology Guide";
+  const heroDescription = pageData?.heroSubtitle || "Everything you need to know about smart home devices, systems, and installation for Canadian homeowners.";
+
   const childPages: ChildPage[] = [
     {
       id: "1",
@@ -77,10 +93,10 @@ export default function SmartHomeOverview() {
 
   return (
     <HubPageTemplate
-      title="Smart Home Technology Guide | Devices, Systems & Setup | approvU"
-      metaDescription="Complete guide to smart home technology including security systems, lighting, thermostats, speakers, and installation. Expert reviews and buying advice for Canadian homeowners."
-      heroHeadline="Transform Your Home with Smart Technology"
-      heroSubheadline="Discover intelligent devices that make your home safer, more comfortable, and energy-efficient"
+      title={heroTitle}
+      metaDescription={heroDescription}
+      heroHeadline={heroTitle}
+      heroSubheadline={heroDescription}
       heroPrimaryCTA="Take the Smart Home Quiz"
       heroPrimaryCTALink="/smart-home/quiz/"
       heroSecondaryCTA="Explore Devices"
