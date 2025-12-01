@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getMortgagePage } from '@/lib/strapi';
 import { Hero } from "@/components/sections/Hero";
 import { FeaturesGrid } from "@/components/sections/FeaturesGrid";
 import { FAQBlock } from "@/components/sections/FAQBlock";
@@ -6,13 +7,25 @@ import { CTASection } from "@/components/sections/CTASection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export const metadata: Metadata = {
-  title: "Complete Mortgage Guides | Expert Advice & Strategies | approvU",
-  description:
-    "Expert guides and strategies for every mortgage situation. From first-time buyers to investment properties, we've got you covered.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('mortgage-guides');
+  
+  return {
+    title: pageData?.metaTitle || "Complete Mortgage Guides | Expert Advice & Strategies | approvU",
+    description: pageData?.metaDescription || "Expert guides and strategies for every mortgage situation. From first-time buyers to investment properties, we've got you covered.",
+  };
+}
 
-export default function MortgageGuides() {
+export default async function MortgageGuides() {
+  let pageData = null;
+  try {
+    pageData = await getMortgagePage('mortgage-guides');
+  } catch (error) {
+    console.error('Error fetching mortgage guides page data:', error);
+  }
+
+  const heroTitle = pageData?.heroTitle || "Complete Mortgage Guides | Expert Advice & Strategies";
+  const heroSubtitle = pageData?.heroSubtitle || "Expert guides and strategies for every mortgage situation. From first-time buyers to investment properties, we've got you covered.";
   const guideCategories = [
     {
       title: "First-Time Buyers",
