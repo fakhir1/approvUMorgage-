@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getMortgagePage } from '@/lib/strapi';
 import { Hero } from '@/components/sections/Hero';
 import { FeaturesGrid } from '@/components/sections/FeaturesGrid';
 import { StepsSection } from '@/components/sections/StepsSection';
@@ -7,12 +8,25 @@ import { CTASection } from '@/components/sections/CTASection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-export const metadata: Metadata = {
-  title: 'Partner with approvU - Mortgage Partnership Opportunities',
-  description: 'Join approvU\'s partner network. Earn commissions, access white-label solutions, and offer mortgage services to your clients. Apply for partnership today.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('partner');
+  
+  return {
+    title: pageData?.metaTitle || 'Partner with approvU - Mortgage Partnership Opportunities',
+    description: pageData?.metaDescription || "Join approvU's partner network. Earn commissions, access white-label solutions, and offer mortgage services to your clients. Apply for partnership today.",
+  };
+}
 
-export default function Partner() {
+export default async function Partner() {
+  let pageData = null;
+  try {
+    pageData = await getMortgagePage('partner');
+  } catch (error) {
+    console.error('Error fetching partner page data:', error);
+  }
+
+  const heroTitle = pageData?.heroTitle || "Partner with approvU - Mortgage Partnership Opportunities";
+  const heroSubtitle = pageData?.heroSubtitle || "Join approvU's partner network. Earn commissions, access white-label solutions, and offer mortgage services to your clients.";
   const partnerBenefits = [
     {
       title: "Higher Conversion Rates",

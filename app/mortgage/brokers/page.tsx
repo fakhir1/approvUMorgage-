@@ -1,13 +1,26 @@
-import Hero from "@/components/sections/Hero";
 import { Metadata } from "next";
+import { getMortgagePage } from '@/lib/strapi';
+import Hero from "@/components/sections/Hero";
 
-export const metadata: Metadata = {
-  title: "Find a Mortgage Broker",
-  description:
-    "Connect with experienced mortgage brokers across Canada. Find local experts in your city.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('mortgage-brokers');
+  
+  return {
+    title: pageData?.metaTitle || "Find a Mortgage Broker | approvU",
+    description: pageData?.metaDescription || "Connect with experienced mortgage brokers across Canada. Find local experts in your city.",
+  };
+}
 
-export default function BrokersPage() {
+export default async function BrokersPage() {
+  let pageData = null;
+  try {
+    pageData = await getMortgagePage('mortgage-brokers');
+  } catch (error) {
+    console.error('Error fetching brokers page data:', error);
+  }
+
+  const heroTitle = pageData?.heroTitle || "Your First Home Starts Here";
+  const heroSubtitle = pageData?.heroSubtitle || "Get expert guidance and access to programs that make your first home more affordable.";
   const provinces = [
     { name: "Ontario", slug: "ontario", cities: 45 },
     { name: "British Columbia", slug: "british-columbia", cities: 12 },
@@ -18,8 +31,8 @@ export default function BrokersPage() {
   return (
     <>
       <Hero
-        title="Your First Home Starts Here"
-        subtitle="Get expert guidance and access to programs that make your first home more affordable."
+        title={heroTitle}
+        subtitle={heroSubtitle}
         ctaText="✨ Get Pre-Approved"
         ctaLink="/approval"
         secondaryCTA="Chat with an Expert"
