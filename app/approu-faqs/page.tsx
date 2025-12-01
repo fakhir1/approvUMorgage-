@@ -1,11 +1,25 @@
 import { Metadata } from "next";
+import { getMortgagePage } from '@/lib/strapi';
 
-export const metadata: Metadata = {
-  title: "FAQs - Frequently Asked Questions",
-  description: "Find answers to common questions about mortgages, the application process, and working with approvU.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('faqs');
+  
+  return {
+    title: pageData?.metaTitle || "FAQs - Frequently Asked Questions | approvU",
+    description: pageData?.metaDescription || "Find answers to common questions about mortgages, the application process, and working with approvU.",
+  };
+}
 
-export default function FAQsPage() {
+export default async function FAQsPage() {
+  let pageData = null;
+  try {
+    pageData = await getMortgagePage('faqs');
+  } catch (error) {
+    console.error('Error fetching FAQs page data:', error);
+  }
+
+  const pageTitle = pageData?.heroTitle || "Frequently Asked Questions";
+  const pageSubtitle = pageData?.heroSubtitle || "Find answers to common questions about mortgages and the home buying process.";
   const faqs = [
     {
       question: "What is a mortgage broker?",
@@ -27,9 +41,9 @@ export default function FAQsPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6">Frequently Asked Questions</h1>
+      <h1 className="text-4xl font-bold mb-6">{pageTitle}</h1>
       <p className="text-lg text-gray-700 mb-8">
-        Find answers to common questions about mortgages and the home buying process.
+        {pageSubtitle}
       </p>
       
       <div className="space-y-6">

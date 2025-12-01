@@ -1,14 +1,29 @@
 import { Metadata } from "next";
+import { getMortgagePage } from '@/lib/strapi';
 
-export const metadata: Metadata = {
-  title: "Contact approvU",
-  description: "Get in touch with approvU. Contact our mortgage experts for personalized assistance.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getMortgagePage('contact-details');
+  
+  return {
+    title: pageData?.metaTitle || "Contact approvU | Mortgage Experts",
+    description: pageData?.metaDescription || "Get in touch with approvU. Contact our mortgage experts for personalized assistance.",
+  };
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  let pageData = null;
+  try {
+    pageData = await getMortgagePage('contact-details');
+  } catch (error) {
+    console.error('Error fetching contact details page data:', error);
+  }
+
+  const pageTitle = pageData?.heroTitle || "Contact Us";
+  const pageSubtitle = pageData?.heroSubtitle || "Get in touch with approvU. Contact our mortgage experts for personalized assistance.";
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
+      <h1 className="text-4xl font-bold mb-6">{pageTitle}</h1>
+      {pageSubtitle && <p className="text-lg text-gray-700 mb-8">{pageSubtitle}</p>}
       
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         <div>
